@@ -1,0 +1,24 @@
+include:
+  - project: 'dashdevs/pfm/infrastructure/shared-pipelines'
+    ref: master
+    file: '/docker/variables.yml'
+  - project: 'dashdevs/pfm/infrastructure/shared-pipelines'
+    ref: master
+    file: '/docker/steps.yml'
+
+
+stages:
+  - test_image
+  - push_image
+
+
+push:
+  stage: push_image
+  script:
+    - docker build -t ${CI_REGISTRY_IMAGE} -t ${CI_REGISTRY_IMAGE}:${DOCKER_TAG} .
+    - docker push ${CI_REGISTRY_IMAGE}
+    - docker push ${CI_REGISTRY_IMAGE}:${DOCKER_TAG}
+  only:
+    - tags
+  tags:
+    - docker_runner
